@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chef Algo - Ensembles & Produit Scalaire - Konan Stephane</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body { background: #0a192f; color: white; font-family: 'Segoe UI', sans-serif; }
+    .card { border-radius: 16px; border: none; }
+    .code-box { background: #112240; border-radius: 12px; font-family: monospace; }
+    .badge-chef { background: #f59e0b; color: black; }
+</style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">👨‍🍳 CHEF ALGO - 2 Problèmes</h1>
+        <p class="text-white-50">Konan Stephane | GoMyCode 2026 | Tableaux + Procédure + Fonction</p>
+        <span class="badge badge-chef px-3 py-2">NIVEAU LÉGENDE</span>
+    </div>
+
+    <div class="row">
+        <!-- PROBLEME 1 -->
+        <div class="col-md-6 mb-4">
+            <div class="card p-4 text-dark shadow">
+                <h3>Problème 1 : Somme Distincts</h3>
+                <p class="text-muted small">Ensemble 1: [3,1,7,9] | Ensemble 2: [2,4,1,9,3] => Résultat 13 (4+7+2)</p>
+                <label>Ensemble 1 (séparé par virgule)</label>
+                <input id="ens1" class="form-control mb-2" value="3,1,7,9">
+                <label>Ensemble 2</label>
+                <input id="ens2" class="form-control mb-3" value="2,4,1,9,3">
+                <button onclick="resoudreProbleme1()" class="btn btn-dark w-100">CALCULER SOMME DISTINCTS</button>
+                <div id="res1" class="code-box text-white p-3 mt-3" style="display:none"></div>
+            </div>
+        </div>
+
+        <!-- PROBLEME 2 -->
+        <div class="col-md-6 mb-4">
+            <div class="card p-4 text-dark shadow">
+                <h3>Problème 2 : Produit Scalaire</h3>
+                <p class="text-muted small">v1 . v2 = 0 => Orthogonaux</p>
+                <label>Vecteur v1</label>
+                <input id="v1" class="form-control mb-2" value="1,2,3">
+                <label>Vecteur v2</label>
+                <input id="v2" class="form-control mb-3" value="4,5,6">
+                <button onclick="resoudreProbleme2()" class="btn btn-warning w-100 fw-bold">CALCULER DOT PRODUCT</button>
+                <button onclick="testerOrthogonaux()" class="btn btn-outline-dark w-100 mt-2">Tester Orthogonalité (n couples)</button>
+                <div id="res2" class="code-box text-white p-3 mt-3" style="display:none"></div>
+            </div>
+        </div>
+    </div>
+    <p class="text-center text-white-50 small">Chef: Konan Stephane - Algorithmes avec tableaux et boucles imbriquées</p>
+</div>
+
+<script>
+// ============================================================
+// PROBLÈME 1 : SOMME DES ÉLÉMENTS DISTINCTS - AVEC TABLEAUX
+// Algo demandé: Initialiser somme=0, comparer chaque élément
+// ============================================================
+function sommeDistincts(ensemble1, ensemble2) {
+    let somme = 0;
+    let distincts = [];
+
+    // Étape 1: Éléments de ensemble1 qui ne sont PAS dans ensemble2
+    for (let i = 0; i < ensemble1.length; i++) {
+        let trouve = false;
+        // Boucle imbriquée pour chercher
+        for (let j = 0; j < ensemble2.length; j++) {
+            if (ensemble1[i] === ensemble2[j]) {
+                trouve = true;
+                break;
+            }
+        }
+        if (!trouve) {
+            somme += ensemble1[i];
+            distincts.push(ensemble1[i]);
+        }
+    }
+
+    // Étape 2: Inverse - Éléments de ensemble2 qui ne sont PAS dans ensemble1
+    for (let i = 0; i < ensemble2.length; i++) {
+        let trouve = false;
+        for (let j = 0; j < ensemble1.length; j++) {
+            if (ensemble2[i] === ensemble1[j]) {
+                trouve = true;
+                break;
+            }
+        }
+        if (!trouve) {
+            somme += ensemble2[i];
+            distincts.push(ensemble2[i]);
+        }
+    }
+
+    return { somme, distincts };
+}
+
+function resoudreProbleme1() {
+    let e1 = document.getElementById('ens1').value.split(',').map(Number);
+    let e2 = document.getElementById('ens2').value.split(',').map(Number);
+    let r = sommeDistincts(e1, e2);
+    let div = document.getElementById('res1');
+    div.style.display = 'block';
+    div.innerHTML = `Ensemble 1: [${e1}]<br>Ensemble 2: [${e2}]<br>Éléments distincts: [${r.distincts}] => 4,7,2<br><strong class="text-warning">SOMME = ${r.somme} (attendu 13)</strong>`;
+    console.log("P1 - Somme distincts:", r.somme);
+}
+
+// ============================================================
+// PROBLÈME 2 : PRODUIT SCALAIRE - PROCÉDURE vs FONCTION
+// ============================================================
+
+// VERSION PROCÉDURE : modifie ps par référence (via objet)
+function dot_product_procedure(v1, v2, resultat) {
+    // resultat est un objet { ps: 0 } pour simuler passage par référence
+    resultat.ps = 0;
+    for (let i = 0; i < v1.length; i++) {
+        resultat.ps = resultat.ps + (v1[i] * v2[i]);
+    }
+    // Pas de return, on modifie la variable ps comme une procédure
+}
+
+// VERSION FONCTION : retourne directement la valeur (plus moderne)
+function dot_product(v1, v2) {
+    let ps = 0;
+    for (let i = 0; i < v1.length; i++) {
+        ps += v1[i] * v2[i];
+    }
+    return ps;
+}
+
+// ALGORITHME PRINCIPAL : Vérifie n couples si orthogonaux
+function sontOrthogonaux(v1, v2) {
+    // Utilisation de la FONCTION
+    let ps = dot_product(v1, v2);
+    return ps === 0; // Orthogonal si produit scalaire = 0
+}
+
+function resoudreProbleme2() {
+    let v1 = document.getElementById('v1').value.split(',').map(Number);
+    let v2 = document.getElementById('v2').value.split(',').map(Number);
+
+    // Test Procédure
+    let obj = { ps: 0 };
+    dot_product_procedure(v1, v2, obj);
+    
+    // Test Fonction
+    let psFonction = dot_product(v1, v2);
+    let ortho = sontOrthogonaux(v1, v2);
+
+    let div = document.getElementById('res2');
+    div.style.display = 'block';
+    div.innerHTML = `v1: [${v1}]<br>v2: [${v2}]<br>
+    Procédure -> ps = ${obj.ps}<br>
+    Fonction -> ps = ${psFonction}<br>
+    <strong class="text-warning">${ortho ? "✅ ORTHOGONAUX (ps=0)" : "❌ PAS ORTHOGONAUX (ps ≠ 0)"}</strong><br>
+    <small>Calcul: ${v1.map((x,i)=>`${x}*${v2[i]}`).join(' + ')} = ${psFonction}</small>`;
+}
+
+function testerOrthogonaux() {
+    // n couples de vecteurs - Boucles imbriquées demandées
+    let couples = [
+        { v1: [1,0], v2: [0,1] },       // orthogonaux => 0
+        { v1: [1,2], v2: [3,4] },       // 11 => pas ortho
+        { v1: [2,3], v2: [-3,2] },      // 0 => orthogonaux
+        { v1: [1,2,3], v2: [4,5,6] }     // 32 => pas ortho
+    ];
+
+    let html = "<strong>n couples testés :</strong><br>";
+    // BOUCLE IMBRIQUÉE : boucle externe sur les couples
+    for (let k = 0; k < couples.length; k++) {
+        let v1 = couples[k].v1;
+        let v2 = couples[k].v2;
+        // Boucle interne dans dot_product
+        let ps = dot_product(v1, v2);
+        let ortho = ps === 0 ? "ORTHOGONAUX ✅" : "NON ORTHOGONAUX";
+        html += `Couple ${k+1}: [${v1}] . [${v2}] = ${ps} => ${ortho}<br>`;
+    }
+    let div = document.getElementById('res2');
+    div.style.display = 'block';
+    div.innerHTML = html;
+}
+
+// Tests console chef
+console.log("P1:", sommeDistincts([3,1,7,9],[2,4,1,9,3])); // 13
+console.log("P2 dot:", dot_product([1,2,3],[4,5,6])); // 32
+console.log("Ortho?", sontOrthogonaux([1,0],[0,1])); // true
+</script>
+</body>
+</html>
